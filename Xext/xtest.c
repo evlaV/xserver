@@ -148,6 +148,41 @@ ProcXTestCompareCursor(ClientPtr client)
     return Success;
 }
 
+static void
+XTestDeviceSendEvents(DeviceIntPtr dev,
+                      int type,
+                      int detail,
+                      int flags,
+                      int firstValuator,
+                      int numValuators,
+                      const int *valuators)
+{
+    ValuatorMask mask;
+    int nevents = 0;
+    int i;
+
+    switch (type) {
+    case MotionNotify:
+        valuator_mask_set_range(&mask, firstValuator, numValuators, valuators);
+        nevents = GetPointerEvents(xtest_evlist, dev, type, 0, flags, &mask);
+        break;
+    case ButtonPress:
+    case ButtonRelease:
+        valuator_mask_set_range(&mask, firstValuator, numValuators, valuators);
+        nevents = GetPointerEvents(xtest_evlist, dev, type, detail,
+                                   flags, &mask);
+        break;
+    case KeyPress:
+    case KeyRelease:
+        nevents =
+            GetKeyboardEvents(xtest_evlist, dev, type, detail);
+        break;
+    }
+
+    for (i = 0; i < nevents; i++)
+        mieqProcessDeviceEvent(dev, &xtest_evlist[i], miPointerGetScreen(inputInfo.pointer));
+}
+
 static int
 ProcXTestFakeInput(ClientPtr client)
 {
@@ -157,12 +192,9 @@ ProcXTestFakeInput(ClientPtr client)
     DeviceIntPtr dev = NULL;
     WindowPtr root;
     Bool extension = FALSE;
-    ValuatorMask mask;
     int valuators[MAX_VALUATORS] = { 0 };
     int numValuators = 0;
     int firstValuator = 0;
-    int nevents = 0;
-    int i;
     int base = 0;
     int flags = 0;
     int need_ptr_update = 1;
@@ -408,26 +440,8 @@ ProcXTestFakeInput(ClientPtr client)
     if (screenIsSaved == SCREEN_SAVER_ON)
         dixSaveScreens(serverClient, SCREEN_SAVER_OFF, ScreenSaverReset);
 
-    switch (type) {
-    case MotionNotify:
-        valuator_mask_set_range(&mask, firstValuator, numValuators, valuators);
-        nevents = GetPointerEvents(xtest_evlist, dev, type, 0, flags, &mask);
-        break;
-    case ButtonPress:
-    case ButtonRelease:
-        valuator_mask_set_range(&mask, firstValuator, numValuators, valuators);
-        nevents = GetPointerEvents(xtest_evlist, dev, type, ev->u.u.detail,
-                                   flags, &mask);
-        break;
-    case KeyPress:
-    case KeyRelease:
-        nevents =
-            GetKeyboardEvents(xtest_evlist, dev, type, ev->u.u.detail);
-        break;
-    }
-
-    for (i = 0; i < nevents; i++)
-        mieqProcessDeviceEvent(dev, &xtest_evlist[i], miPointerGetScreen(inputInfo.pointer));
+    (*dev->sendEventsProc) (dev, type, ev->u.u.detail, flags,
+                            firstValuator, numValuators, valuators);
 
     if (need_ptr_update)
         miPointerUpdateSprite(dev);
@@ -633,6 +647,9 @@ AllocXTestDevice(ClientPtr client, const char *name,
                                      XIGetKnownProperty(XI_PROP_XTEST_DEVICE),
                                      FALSE);
         XIRegisterPropertyHandler(*keybd, DeviceSetXTestProperty, NULL, NULL);
+
+        (*ptr)->sendEventsProc = XTestDeviceSendEvents;
+        (*keybd)->sendEventsProc = XTestDeviceSendEvents;
     }
 
     free(xtestname);

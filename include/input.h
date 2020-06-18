@@ -191,6 +191,14 @@ typedef Bool (*PointerAccelSchemeInitProc) (DeviceIntPtr /*dev */ ,
                                             struct _ValuatorAccelerationRec *
                                             /*protoScheme */ );
 
+typedef void (*DeviceSendEventsProc) (DeviceIntPtr /*dev */ ,
+                                      int /* event type */ ,
+                                      int /* detail, buttons or keycode */ ,
+                                      int /* flags */ ,
+                                      int /* first valuator */ ,
+                                      int /* num valuators */ ,
+                                      const int * /*valuators */ );
+
 typedef struct _DeviceRec {
     void *devicePrivate;
     ProcessInputProc processInputProc;  /* current */
