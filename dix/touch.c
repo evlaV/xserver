@@ -142,7 +142,10 @@ TouchBeginDDXTouch(DeviceIntPtr dev, uint32_t ddx_id)
     if (!t)
         return NULL;
 
-    emulate_pointer = (t->mode == XIDirectTouch);
+    /* emulate_pointer = (t->mode == XIDirectTouch);
+       VALVE - we use this for Xwayland onl
+       our gamescope usage of Xwayland does not need this, as it does its own pointer emulation */
+    emulate_pointer = FALSE;
 
     /* Look for another active touchpoint with the same DDX ID. DDX
      * touchpoints must be unique. */
