@@ -580,8 +580,13 @@ xwl_present_check_flip(RRCrtcPtr crtc,
      * window's, e.g. because a client redirected this window or one of its
      * parents.
      */
+
+    /* Josh: We already check if this window covers the whole top level window.
+       there is no reason to check if the pixmaps match. Disabling.
+
     if (screen->GetWindowPixmap(xwl_window->window) != screen->GetWindowPixmap(present_window))
         return FALSE;
+    */
 
     /*
      * We currently only allow flips of windows, that have the same
