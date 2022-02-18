@@ -154,7 +154,7 @@ damage_report(DamagePtr pDamage, RegionPtr pRegion, void *data)
     }
 #endif
 
-    xorg_list_add(&xwl_window->link_damage, &xwl_screen->damage_window_list);
+    xorg_list_append(&xwl_window->link_damage, &xwl_screen->damage_window_list);
 }
 
 static void
