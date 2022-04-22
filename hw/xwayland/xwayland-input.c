@@ -43,6 +43,7 @@
 #include "xwayland-input.h"
 #include "xwayland-window.h"
 #include "xwayland-screen.h"
+#include "xwayland-xtest.h"
 
 #include "pointer-constraints-unstable-v1-client-protocol.h"
 #include "relative-pointer-unstable-v1-client-protocol.h"
@@ -2873,6 +2874,8 @@ input_handler(void *data, struct wl_registry *registry, uint32_t id,
         init_tablet_manager(xwl_screen, id, version);
     } else if (strcmp(interface, "zwp_xwayland_keyboard_grab_manager_v1") == 0) {
         init_keyboard_grab(xwl_screen, id, version);
+    } else if (strcmp(interface, "org_kde_kwin_fake_input") == 0) {
+        xwayland_override_xtest_fake_input(xwl_screen, id, version);
     }
 }
 

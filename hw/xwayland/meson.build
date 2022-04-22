@@ -26,6 +26,7 @@ srcs = [
     'xwayland-window.h',
     'xwayland-window-buffers.c',
     'xwayland-window-buffers.h',
+    'xwayland-xtest.c',
     '../../mi/miinitext.c',
     '../../mi/miinitext.h',
 ]
@@ -35,6 +36,10 @@ scanner = find_program(scanner_dep.get_pkgconfig_variable('wayland_scanner'))
 
 protocols_dep = dependency('wayland-protocols', version: wayland_protocols_req)
 protodir = protocols_dep.get_pkgconfig_variable('pkgdatadir')
+
+# Without any module meson thinks the dependency was not found correctly even though it has no modules
+plasma_protocols_dep = dependency('PlasmaWaylandProtocols', method: 'cmake', optional_modules: [''])
+plasma_protodir = plasma_protocols_dep.get_variable('PLASMA_WAYLAND_PROTOCOLS_DIR')
 
 pointer_xml = join_paths(protodir, 'unstable', 'pointer-constraints', 'pointer-constraints-unstable-v1.xml')
 relative_xml = join_paths(protodir, 'unstable', 'relative-pointer', 'relative-pointer-unstable-v1.xml')
@@ -46,6 +51,7 @@ dmabuf_xml = join_paths(protodir, 'unstable', 'linux-dmabuf', 'linux-dmabuf-unst
 viewporter_xml = join_paths(protodir, 'stable', 'viewporter', 'viewporter.xml')
 xdg_shell_xml = join_paths(protodir, 'stable', 'xdg-shell', 'xdg-shell.xml')
 drm_lease_xml = join_paths(protodir, 'staging', 'drm-lease', 'drm-lease-v1.xml')
+fake_input_xml = join_paths(plasma_protodir, 'fake-input.xml')
 
 client_header = generator(scanner,
     output : '@BASENAME@-client-protocol.h',
@@ -72,6 +78,7 @@ srcs += client_header.process(dmabuf_xml)
 srcs += client_header.process(viewporter_xml)
 srcs += client_header.process(xdg_shell_xml)
 srcs += client_header.process(drm_lease_xml)
+srcs += client_header.process(fake_input_xml)
 srcs += code.process(relative_xml)
 srcs += code.process(pointer_xml)
 srcs += code.process(gestures_xml)
@@ -82,6 +89,7 @@ srcs += code.process(dmabuf_xml)
 srcs += code.process(viewporter_xml)
 srcs += code.process(xdg_shell_xml)
 srcs += code.process(drm_lease_xml)
+srcs += code.process(fake_input_xml)
 
 xwayland_glamor = []
 eglstream_srcs = []
