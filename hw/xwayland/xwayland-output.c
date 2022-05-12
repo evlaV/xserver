@@ -325,6 +325,19 @@ const int32_t xwl_output_fake_modes[][2] = {
     {  640,  350 },
 };
 
+/* Enables always exposing extra modes without
+ * supporting viewporter.
+ * Useful for some wayland compositors
+ * that work kiosk-like with a single window, that handle scaling
+ * themselves where viewporter wouldn't make sense.
+ */
+static Bool
+always_expose_extra_modes(void)
+{
+    const char *extra_mode_env = getenv("XWAYLAND_FORCE_ENABLE_EXTRA_MODES");
+    return extra_mode_env && atoi(extra_mode_env) != 0;
+}
+
 /* Build an array with RRModes the first mode is the actual output mode, the
  * rest are fake modes from the xwl_output_fake_modes list. We do this for apps
  * which want to change resolution when they go fullscreen.
@@ -350,7 +363,7 @@ output_get_rr_modes(struct xwl_output *xwl_output,
 
     *count = 1;
 
-    if (!xwl_screen_has_resolution_change_emulation(xwl_screen))
+    if (!xwl_screen_has_resolution_change_emulation(xwl_screen) && !always_expose_extra_modes())
         return rr_modes;
 
     /* Add fake modes */
