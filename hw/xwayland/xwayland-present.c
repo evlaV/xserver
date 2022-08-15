@@ -564,12 +564,15 @@ xwl_present_check_flip(RRCrtcPtr crtc,
     WindowPtr toplvl_window = xwl_present_toplvl_pixmap_window(present_window);
     struct xwl_window *xwl_window = xwl_window_from_window(present_window);
     ScreenPtr screen = pixmap->drawable.pScreen;
+    PixmapPtr window_pixmap;
 
     if (reason)
         *reason = PRESENT_FLIP_REASON_UNKNOWN;
 
     if (!xwl_window)
         return FALSE;
+
+    window_pixmap = screen->GetWindowPixmap(xwl_window->window);
 
     if (!crtc)
         return FALSE;
@@ -598,11 +601,15 @@ xwl_present_check_flip(RRCrtcPtr crtc,
     if (!xwl_glamor_check_flip(pixmap))
         return FALSE;
 
+    /* If this is a dummy window, we can always flip to it */
+    if (window_pixmap->drawable.width == 1 && window_pixmap->drawable.height == 1)
+        return TRUE;
+
     /* Can't flip if the window pixmap doesn't match the xwl_window parent
      * window's, e.g. because a client redirected this window or one of its
      * parents.
      */
-    if (screen->GetWindowPixmap(xwl_window->window) != screen->GetWindowPixmap(present_window))
+    if (window_pixmap != screen->GetWindowPixmap(present_window))
         return FALSE;
 
     /*
