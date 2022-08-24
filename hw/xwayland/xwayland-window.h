@@ -50,6 +50,7 @@ struct xwl_window {
     float scale_x, scale_y;
     struct xdg_surface *xdg_surface;
     struct xdg_toplevel *xdg_toplevel;
+    struct gamescope_surface_tearing_control_v1 *tearing_control;
     WindowPtr window;
     struct xorg_list link_damage;
     struct xorg_list link_window;
