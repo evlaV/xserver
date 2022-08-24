@@ -47,6 +47,7 @@ viewporter_xml = join_paths(protodir, 'stable', 'viewporter', 'viewporter.xml')
 xdg_shell_xml = join_paths(protodir, 'stable', 'xdg-shell', 'xdg-shell.xml')
 drm_lease_xml = join_paths(protodir, 'staging', 'drm-lease', 'drm-lease-v1.xml')
 shortcuts_inhibit_xml = join_paths(protodir, 'unstable', 'keyboard-shortcuts-inhibit', 'keyboard-shortcuts-inhibit-unstable-v1.xml')
+tearing_xml = join_paths('protocols', 'unstable', 'tearing-control', 'gamescope-tearing-control-unstable-v1.xml')
 
 client_header = generator(scanner,
     output : '@BASENAME@-client-protocol.h',
@@ -74,6 +75,7 @@ srcs += client_header.process(viewporter_xml)
 srcs += client_header.process(xdg_shell_xml)
 srcs += client_header.process(drm_lease_xml)
 srcs += client_header.process(shortcuts_inhibit_xml)
+srcs += client_header.process(tearing_xml)
 srcs += code.process(relative_xml)
 srcs += code.process(pointer_xml)
 srcs += code.process(gestures_xml)
@@ -85,6 +87,7 @@ srcs += code.process(viewporter_xml)
 srcs += code.process(xdg_shell_xml)
 srcs += code.process(drm_lease_xml)
 srcs += code.process(shortcuts_inhibit_xml)
+srcs += code.process(tearing_xml)
 
 xwayland_glamor = []
 eglstream_srcs = []

@@ -45,6 +45,7 @@
 
 #include "viewporter-client-protocol.h"
 #include "xdg-shell-client-protocol.h"
+#include "gamescope-tearing-control-unstable-v1-client-protocol.h"
 
 #define DELAYED_WL_SURFACE_DESTROY 1000 /* ms */
 
@@ -772,6 +773,11 @@ ensure_surface_for_window(WindowPtr window)
         goto err;
     }
 
+    if (xwl_screen->tearing_control) {
+        xwl_window->tearing_control =
+            gamescope_tearing_control_v1_get_tearing_control(xwl_screen->tearing_control, xwl_window->surface);
+    }
+
     if (!xwl_screen->rootless && !xwl_create_root_surface(xwl_window))
         goto err;
 
@@ -957,6 +963,11 @@ xwl_unrealize_window(WindowPtr window)
 
     if (xwl_window_has_viewport_enabled(xwl_window))
         xwl_window_disable_viewport(xwl_window);
+
+    if (xwl_window->tearing_control) {
+        gamescope_surface_tearing_control_v1_destroy(xwl_window->tearing_control);
+        xwl_window->tearing_control = NULL;
+    }
 
 #ifdef GLAMOR_HAS_GBM
     if (xwl_screen->present) {

@@ -108,6 +108,7 @@ struct xwl_screen {
     struct xorg_list drm_leases;
     struct xwl_output *fixed_output;
     struct xorg_list pending_wl_surface_destroy;
+    struct gamescope_tearing_control_v1 *tearing_control;
     uint32_t serial;
 
 #define XWL_FORMAT_ARGB8888 (1 << 0)
