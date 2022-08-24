@@ -43,6 +43,7 @@ struct xwl_window {
     struct wp_viewport *viewport;
     float scale_x, scale_y;
     struct xdg_surface *xdg_surface;
+    struct zwp_surface_tearing_control_v1 *tearing_control;
     WindowPtr window;
     struct xorg_list link_damage;
     struct xorg_list link_window;
