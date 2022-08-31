@@ -34,7 +34,7 @@
 #include "xwayland-pixmap.h"
 #include "glamor.h"
 
-#include "tearing-control-unstable-v1-client-protocol.h"
+#include "gamescope-tearing-control-unstable-v1-client-protocol.h"
 
 
 #define XWL_PRESENT_CAPS PresentCapabilityAsync
@@ -730,10 +730,10 @@ xwl_present_flip(WindowPtr present_window,
     // Josh: No support for VSync relaxed, this is something that should
     // be determined by a user setting in gamescope.
     if (xwl_window->tearing_control)
-        zwp_surface_tearing_control_v1_set_presentation_hint(xwl_window->tearing_control, 
+        gamescope_surface_tearing_control_v1_set_presentation_hint(xwl_window->tearing_control, 
             sync_flip
-                ? ZWP_SURFACE_TEARING_CONTROL_V1_PRESENTATION_HINT_VSYNC
-                : ZWP_SURFACE_TEARING_CONTROL_V1_PRESENTATION_HINT_ASYNC);
+                ? GAMESCOPE_SURFACE_TEARING_CONTROL_V1_PRESENTATION_HINT_VSYNC
+                : GAMESCOPE_SURFACE_TEARING_CONTROL_V1_PRESENTATION_HINT_ASYNC);
 
     wl_surface_commit(xwl_window->surface);
 

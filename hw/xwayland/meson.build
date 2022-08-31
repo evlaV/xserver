@@ -46,7 +46,7 @@ dmabuf_xml = join_paths(protodir, 'unstable', 'linux-dmabuf', 'linux-dmabuf-unst
 viewporter_xml = join_paths(protodir, 'stable', 'viewporter', 'viewporter.xml')
 xdg_shell_xml = join_paths(protodir, 'stable', 'xdg-shell', 'xdg-shell.xml')
 drm_lease_xml = join_paths(protodir, 'staging', 'drm-lease', 'drm-lease-v1.xml')
-tearing_xml = join_paths('protocols', 'unstable', 'tearing-control', 'tearing-control-unstable-v1.xml')
+tearing_xml = join_paths('protocols', 'unstable', 'tearing-control', 'gamescope-tearing-control-unstable-v1.xml')
 
 client_header = generator(scanner,
     output : '@BASENAME@-client-protocol.h',

@@ -45,7 +45,7 @@
 
 #include "viewporter-client-protocol.h"
 #include "xdg-shell-client-protocol.h"
-#include "tearing-control-unstable-v1-client-protocol.h"
+#include "gamescope-tearing-control-unstable-v1-client-protocol.h"
 
 static DevPrivateKeyRec xwl_window_private_key;
 static DevPrivateKeyRec xwl_damage_private_key;
@@ -451,7 +451,7 @@ ensure_surface_for_window(WindowPtr window)
 
     if (xwl_screen->tearing_control) {
         xwl_window->tearing_control =
-            zwp_tearing_control_v1_get_tearing_control(xwl_screen->tearing_control, xwl_window->surface);
+            gamescope_tearing_control_v1_get_tearing_control(xwl_screen->tearing_control, xwl_window->surface);
     }
 
     if (!xwl_screen->rootless) {
@@ -612,7 +612,7 @@ xwl_unrealize_window(WindowPtr window)
         xwl_window_disable_viewport(xwl_window);
 
     if (xwl_window->tearing_control) {
-        zwp_surface_tearing_control_v1_destroy(xwl_window->tearing_control);
+        gamescope_surface_tearing_control_v1_destroy(xwl_window->tearing_control);
         xwl_window->tearing_control = NULL;
     }
 
